@@ -57,17 +57,16 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // ── Data ──────────────────────────────────────────────────────────────
         const MILESTONES_DATA = [
-            {title:'Factory gate clearance - Foxconn Zhengzhou',meta:'Completed - Batch 1 & 2 confirmed - 4.2M units',status:'done',date:'Oct 12'},
+            {title:'Factory gate clearance - Foxconn Zhengzhou',meta:'Completed - Batch 1 and 2 confirmed - 4.2M units',status:'done',date:'Oct 12'},
             {title:'Ocean freight booking - Pacific crossings',meta:'Completed - 3 vessels confirmed - LCL buffer reserved',status:'done',date:'Oct 18'},
             {title:'Port of entry customs clearance - Long Beach',meta:'Completed - Tier-1 broker engaged - zero holds',status:'done',date:'Oct 28'},
             {title:'Regional DC inbound receiving - West',meta:'Active - 94% receipt confirmed - variance within SOP',status:'active',date:'Nov 02'},
             {title:'Regional DC inbound receiving - Southwest',meta:'At risk - Customs secondary review - 36-hr delay flagged',status:'risk',date:'Nov 04'},
-            {title:'Retail store planogram execution - Americas',meta:'Active - 2,847 locations - fixture kits en route',status:'active',date:'Nov 08'},
+            {title:'Retail store planogram execution - Americas',meta:'Active - 2847 locations - fixture kits en route',status:'active',date:'Nov 08'},
             {title:'eCommerce inventory allocation - Direct channel',meta:'Active - SKU mapping 98% complete - backorder logic live',status:'active',date:'Nov 09'},
             {title:'Last-mile carrier handoff - urban markets',meta:'Pending - UPS/FedEx SLAs confirmed - surge routing ready',status:'pending',date:'Nov 14'},
-            {title:'Brick & mortar launch-day replenishment wave',meta:'Pending - Reserve inventory staged - auto-trigger set',status:'pending',date:'Nov 15'},
+            {title:'Brick and mortar launch-day replenishment wave',meta:'Pending - Reserve inventory staged - auto-trigger set',status:'pending',date:'Nov 15'},
             {title:'eCommerce Day 1 traffic - queue logic activation',meta:'Pending - Load balancer pre-provisioned - CDN burst ready',status:'pending',date:'Nov 15'},
         ];
 
@@ -87,10 +86,10 @@
         ];
 
         const RISKS = [
-            {title:'Southwest customs secondary review',severity:'amber',tag:'Logistics',body:'US Customs & Border Protection initiated secondary review on 3 inbound containers at Nogales POE. 36-hour delay projected.',steps:['Activate Tier-2 customs broker protocol - prioritize Titanium-level shipments','Re-route 40% of Southwest allocation through El Paso alternate POE','Trigger auto-rebalance from Pacific NW overstock (+48k units) to cover gap','Notify retail partners - revised planogram execution timeline issued']},
+            {title:'Southwest customs secondary review',severity:'amber',tag:'Logistics',body:'US Customs and Border Protection initiated secondary review on 3 inbound containers at Nogales POE. 36-hour delay projected.',steps:['Activate Tier-2 customs broker protocol - prioritize Titanium-level shipments','Re-route 40% of Southwest allocation through El Paso alternate POE','Trigger auto-rebalance from Pacific NW overstock (+48k units) to cover gap','Notify retail partners - revised planogram execution timeline issued']},
             {title:'eCommerce Day-1 traffic surge projection',severity:'amber',tag:'Digital',body:'ML demand model projects 4.2x normal traffic on launch morning. CDN and checkout infrastructure require pre-burst provisioning.',steps:['Pre-provision 8x CDN burst capacity across 3 edge regions','Deploy virtual queue (estimated 12-min avg wait at peak)','Activate cart-reservation timeout logic (15-min hold)','Ops war room staffed T-4hrs through T+6hrs launch window']},
             {title:'Last-mile carrier capacity - urban surge markets',severity:'green',tag:'Fulfillment',body:'NYC, LA, Chicago last-mile partners show 94% capacity confirmation. Minor gap in Chicago suburban zone.',steps:['Chicago suburban overflow routed to secondary carrier (OnTrac)','Delivery SLA adjusted from 1-day to 2-day for 8 ZIP codes','Consumer notification templates pre-staged in CRM']},
-            {title:'Retail associate NPI training completion',severity:'green',tag:'Retail Ops',body:'2,847 store locations - 91% of associates confirmed trained on launch protocols, demo scripts, and inventory SOP.',steps:['Field ops team executing remaining 9% via virtual session T-3 days','Knowledge check pass rate: 97% - above 95% target','Launch-day digital runbook pushed to all store devices']},
+            {title:'Retail associate NPI training completion',severity:'green',tag:'Retail Ops',body:'2847 store locations - 91% of associates confirmed trained on launch protocols, demo scripts, and inventory SOP.',steps:['Field ops team executing remaining 9% via virtual session T-3 days','Knowledge check pass rate: 97% - above 95% target','Launch-day digital runbook pushed to all store devices']},
         ];
 
         const CENSUS_STATES = [
@@ -121,9 +120,138 @@
             ]},
         ];
 
-        // ── Sub-components ────────────────────────────────────────────────────
-
         function KpiBar() {
             return (
                 <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'1px',background:'#e5e7eb',borderBottom:'0.5px solid #e5e7eb'}}>
-                    {
+                    {[
+                        {label:'Supply chain readiness',value:'94',unit:'%',delta:'+3pts WoW',deltaColor:'#3B6D11',barColor:'#185FA5',barW:'94%',icon:'ti-trending-up'},
+                        {label:'Cart-to-door latency',value:'1.8',unit:' days',delta:'-0.4 vs baseline',deltaColor:'#3B6D11',barColor:'#0F6E56',barW:'88%',icon:'ti-trending-down'},
+                        {label:'Regional inventory stock',value:'89',unit:'%',delta:'2 nodes below threshold',deltaColor:'#854F0B',barColor:'#BA7517',barW:'89%',icon:'ti-alert-triangle'},
+                        {label:'Channel conversion rate',value:'6.4',unit:'%',delta:'+1.1pts vs forecast',deltaColor:'#3B6D11',barColor:'#639922',barW:'72%',icon:'ti-trending-up'},
+                    ].map((k,i) => (
+                        <div key={i} style={{background:'white',padding:'1rem 1.25rem'}}>
+                            <div style={{fontSize:10,fontWeight:500,letterSpacing:'0.1em',color:'#9ca3af',textTransform:'uppercase',marginBottom:6}}>{k.label}</div>
+                            <div style={{fontSize:22,fontWeight:500,lineHeight:1,color:'#185FA5'}}>{k.value}<span style={{fontSize:14}}>{k.unit}</span></div>
+                            <div style={{fontSize:11,marginTop:4,color:k.deltaColor}}><i className={`ti ${k.icon}`} aria-hidden="true"></i> {k.delta}</div>
+                            <div className="kpi-bar-track"><div className="kpi-bar-fill" style={{width:k.barW,background:k.barColor}}></div></div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        function Tab1() {
+            const [milestones, setMilestones] = useState(MILESTONES_DATA);
+            const cycle = ['pending','active','done','risk'];
+            const cycleStatus = (i) => {
+                const m = [...milestones];
+                m[i] = {...m[i], status: cycle[(cycle.indexOf(m[i].status)+1)%4]};
+                setMilestones(m);
+            };
+            const iconMap = {done:{cls:'done',icon:'ti-check'},active:{cls:'active-ms',icon:'ti-player-play'},risk:{cls:'risk',icon:'ti-alert-triangle'},pending:{cls:'pending',icon:'ti-clock'}};
+            const badgeMap = {done:{cls:'badge-done',lbl:'Complete'},active:{cls:'badge-active',lbl:'In progress'},risk:{cls:'badge-risk',lbl:'At risk'},pending:{cls:'badge-pending',lbl:'Pending'}};
+            return (
+                <div style={{padding:'1.25rem 1.5rem'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:4,marginBottom:12,overflowX:'auto',flexWrap:'wrap',rowGap:6}}>
+                        {['Factory Gate','Origin Freight','Port of Entry','Regional DC','Last Mile','B&M Retail','eCommerce Direct'].map((n,i,arr) => (
+                            <React.Fragment key={i}>
+                                <div className={`flow-node${i<4?' active-fn':''}`}>{n}</div>
+                                {i<arr.length-1 && <span style={{color:'#9ca3af',fontSize:12}}>-&gt;</span>}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                    <div style={{height:3,background:'#e5e7eb',borderRadius:2,marginBottom:6}}>
+                        <div style={{width:'74%',height:3,borderRadius:2,background:'#185FA5',transition:'width 0.8s ease'}}></div>
+                    </div>
+                    <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:'#9ca3af',marginBottom:'1rem'}}>
+                        <span>Overall NPI progress</span><span style={{fontWeight:500,color:'#185FA5'}}>74% - 47/52 milestones</span>
+                    </div>
+                    <div style={{fontSize:10,fontWeight:500,letterSpacing:'0.12em',textTransform:'uppercase',color:'#9ca3af',marginBottom:12}}>Critical path milestones</div>
+                    {milestones.map((m,i) => (
+                        <div key={i} style={{display:'flex',alignItems:'flex-start',gap:12,marginBottom:12,padding:12,background:'#f9fafb',borderRadius:8,border:'0.5px solid #e5e7eb'}}>
+                            <div className={`ms-icon ${iconMap[m.status].cls}`}><i className={`ti ${iconMap[m.status].icon}`} aria-hidden="true"></i></div>
+                            <div style={{flex:1,minWidth:0}}>
+                                <div style={{fontSize:13,fontWeight:500}}>{m.title}</div>
+                                <div style={{fontSize:11,color:'#6b7280',marginTop:2}}>{m.meta}</div>
+                            </div>
+                            <div style={{flexShrink:0,textAlign:'right'}}>
+                                <div style={{fontSize:10,color:'#9ca3af',marginBottom:4}}>{m.date}</div>
+                                <button className={`ms-status ${badgeMap[m.status].cls}`} onClick={() => cycleStatus(i)} style={{fontSize:10,fontWeight:500,padding:'2px 8px',borderRadius:10,border:'none',cursor:'pointer'}}>{badgeMap[m.status].lbl}</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        function Tab2() {
+            const [selectedInv, setSelectedInv] = useState(null);
+            const barRef1 = useRef(null);
+            const barRef2 = useRef(null);
+            useEffect(() => {
+                setTimeout(() => {
+                    if(barRef1.current) barRef1.current.style.width='82%';
+                    if(barRef2.current) barRef2.current.style.width='61%';
+                },150);
+            },[]);
+            return (
+                <div style={{padding:'1.25rem 1.5rem'}}>
+                    <div style={{background:'#E6F1FB',border:'0.5px solid #85B7EB',borderRadius:8,padding:'10px 14px',marginBottom:'1rem',display:'flex',alignItems:'center',gap:10,fontSize:12,color:'#0C447C'}}>
+                        <i className="ti ti-refresh" aria-hidden="true" style={{fontSize:16,flexShrink:0}}></i>
+                        <span><strong>Auto-rebalance active:</strong> 48000 units routed from Pacific NW overstock to Southwest deficit nodes - Est. arrival T+36hrs</span>
+                    </div>
+                    <div style={{fontSize:10,fontWeight:500,letterSpacing:'0.12em',textTransform:'uppercase',color:'#9ca3af',marginBottom:12}}>12-state Americas market - Inventory allocation</div>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:'1rem'}}>
+                        {INV_REGIONS.map((r,i) => {
+                            const pct = Math.min(r.value,100);
+                            const col = r.value>=95?'#3B6D11':r.value>=80?'#185FA5':'#854F0B';
+                            return (
+                                <div key={i} className={`inv-card${selectedInv===i?' selected':''}`} onClick={() => setSelectedInv(selectedInv===i?null:i)}>
+                                    <div style={{fontSize:10,fontWeight:500,textTransform:'uppercase',letterSpacing:'0.08em',color:'#6b7280',marginBottom:4}}>{r.name}</div>
+                                    <div style={{fontSize:16,fontWeight:500,color:col}}>{r.value}%</div>
+                                    <div style={{height:4,background:'#e5e7eb',borderRadius:2,marginTop:6}}>
+                                        <div style={{width:`${pct}%`,height:4,borderRadius:2,background:r.bar}}></div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    {selectedInv !== null && (
+                        <div style={{background:'#f9fafb',borderRadius:8,border:'0.5px solid #e5e7eb',padding:'12px 14px',marginBottom:'1rem',fontSize:12,color:'#6b7280',lineHeight:1.6}}>
+                            <div style={{fontSize:11,fontWeight:500,color:'#6b7280',marginBottom:4}}>{INV_REGIONS[selectedInv].name} - Detail</div>
+                            <div style={{fontSize:13,color:'#111827'}}>{INV_REGIONS[selectedInv].detail}</div>
+                            <div style={{marginTop:8,fontSize:12,color:INV_REGIONS[selectedInv].value>=95?'#3B6D11':INV_REGIONS[selectedInv].value>=80?'#185FA5':'#A32D2D'}}>{INV_REGIONS[selectedInv].value}% of allocation target</div>
+                        </div>
+                    )}
+                    <div style={{height:'0.5px',background:'#e5e7eb',margin:'1rem 0'}}></div>
+                    <div style={{fontSize:10,fontWeight:500,letterSpacing:'0.12em',textTransform:'uppercase',color:'#9ca3af',marginBottom:12}}>Supply chain velocity - Units/hour by channel</div>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                        <div style={{background:'#f9fafb',borderRadius:8,padding:'12px 14px',border:'0.5px solid #e5e7eb'}}>
+                            <div style={{fontSize:11,color:'#6b7280',marginBottom:4}}>eCommerce direct channel</div>
+                            <div style={{fontSize:20,fontWeight:500,color:'#185FA5'}}>24800</div>
+                            <div style={{fontSize:11,color:'#3B6D11',marginTop:2}}><i className="ti ti-trending-up" aria-hidden="true"></i> 12% above SLA target</div>
+                            <div style={{height:4,background:'#e5e7eb',borderRadius:2,marginTop:8}}>
+                                <div ref={barRef1} style={{width:'0%',height:4,borderRadius:2,background:'#185FA5',transition:'width 0.8s ease'}}></div>
+                            </div>
+                        </div>
+                        <div style={{background:'#f9fafb',borderRadius:8,padding:'12px 14px',border:'0.5px solid #e5e7eb'}}>
+                            <div style={{fontSize:11,color:'#6b7280',marginBottom:4}}>Brick and mortar fulfillment</div>
+                            <div style={{fontSize:20,fontWeight:500,color:'#0F6E56'}}>18200</div>
+                            <div style={{fontSize:11,color:'#854F0B',marginTop:2}}><i className="ti ti-alert-triangle" aria-hidden="true"></i> Southwest nodes lagging</div>
+                            <div style={{height:4,background:'#e5e7eb',borderRadius:2,marginTop:8}}>
+                                <div ref={barRef2} style={{width:'0%',height:4,borderRadius:2,background:'#0F6E56',transition:'width 0.8s ease'}}></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function Tab3() {
+            const [censusOpen, setCensusOpen] = useState(true);
+            const [scenario, setScenario] = useState(0);
+            const [openRisks, setOpenRisks] = useState({});
+            const toggleRisk = (i) => setOpenRisks(prev => ({...prev,[i]:!prev[i]}));
+            const stateClass = {ok:'state-ok',weather:'state-weather',tribal:'state-tribal',blocked:'state-blocked'};
+            return (
+                <div style={{padding:'1.25rem

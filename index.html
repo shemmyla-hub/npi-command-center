@@ -4,69 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NPI Command Center: Project Titan Alpha</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-    
     <style>
         body {
             background-color: #f5f5f7;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
+        .toggle-track { width:36px;height:20px;border-radius:10px;background:#d1d5db;border:0.5px solid #9ca3af;position:relative;transition:background 0.2s;cursor:pointer; }
+        .toggle-track.on { background:#185FA5;border-color:#185FA5; }
+        .toggle-thumb { width:16px;height:16px;border-radius:50%;background:white;position:absolute;top:2px;left:2px;transition:left 0.2s; }
+        .toggle-track.on .toggle-thumb { left:18px; }
+        .kpi-bar-track { height:2px;background:#e5e7eb;border-radius:1px;margin-top:8px; }
+        .kpi-bar-fill { height:2px;border-radius:1px;transition:width 0.6s ease; }
+        .tab-btn { font-size:12px;font-weight:500;padding:0.75rem 0;margin-right:1.5rem;border:none;background:none;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap; }
+        .tab-btn.active { color:#185FA5;border-bottom-color:#185FA5; }
+        .ms-icon { width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px; }
+        .ms-icon.done { background:#EAF3DE;color:#3B6D11; }
+        .ms-icon.active-ms { background:#E6F1FB;color:#185FA5; }
+        .ms-icon.pending { background:#f3f4f6;color:#9ca3af;border:0.5px solid #d1d5db; }
+        .ms-icon.risk { background:#FAEEDA;color:#854F0B; }
+        .badge-done { background:#EAF3DE;color:#3B6D11; }
+        .badge-active { background:#E6F1FB;color:#185FA5; }
+        .badge-pending { background:#f3f4f6;color:#6b7280;border:0.5px solid #d1d5db; }
+        .badge-risk { background:#FAEEDA;color:#854F0B; }
+        .flow-node { font-size:10px;font-weight:500;padding:4px 10px;border-radius:10px;background:#f3f4f6;border:0.5px solid #d1d5db;white-space:nowrap;color:#6b7280; }
+        .flow-node.active-fn { background:#E6F1FB;color:#185FA5;border-color:#85B7EB; }
+        .inv-card { padding:10px 12px;background:#f9fafb;border-radius:8px;border:0.5px solid #e5e7eb;cursor:pointer;transition:border-color 0.15s; }
+        .inv-card:hover { border-color:#9ca3af; }
+        .inv-card.selected { border-color:#185FA5;background:#E6F1FB; }
+        .risk-body.hidden { display:none; }
+        .sim-event { position:relative;margin-bottom:10px;padding-left:20px; }
+        .sim-event::before { content:'';position:absolute;left:0;top:5px;width:6px;height:6px;border-radius:50%;background:#185FA5; }
+        .sim-event::after { content:'';position:absolute;left:2px;top:11px;width:2px;height:calc(100% + 4px);background:#d1d5db; }
+        .sim-event:last-child::after { display:none; }
+        .sim-btn { font-size:11px;padding:4px 12px;border-radius:6px;border:0.5px solid #85B7EB;background:white;color:#185FA5;cursor:pointer;font-weight:500; }
+        .sim-btn.active-btn { background:#185FA5;color:white;border-color:#185FA5; }
+        .state-chip { font-size:10px;font-weight:500;padding:2px 7px;border-radius:8px; }
+        .state-ok { background:#EAF3DE;color:#3B6D11; }
+        .state-weather { background:#FAEEDA;color:#854F0B; }
+        .state-tribal { background:#EEEDFE;color:#3C3489; }
+        .state-blocked { background:#FCEBEB;color:#A32D2D; }
+        .playbook-step { display:flex;align-items:flex-start;gap:8px;margin-top:8px; }
+        .step-num { width:18px;height:18px;border-radius:50%;background:#185FA5;color:white;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px; }
     </style>
 </head>
 <body>
-
     <div id="root"></div>
-
     <script type="text/babel">
-    
-        // =========================================================
-        // <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NPI Command Center: Project Titan Alpha</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-</head>
-<body>
-  <!-- paste widget code here -->
-</body>
-</html>
-        // =========================================================
+        const { useState, useEffect, useRef } = React;
 
-        
+        // ── Data ──────────────────────────────────────────────────────────────
+        const MILESTONES_DATA = [
+            {title:'Factory gate clearance - Foxconn Zhengzhou',meta:'Completed - Batch 1 & 2 confirmed - 4.2M units',status:'done',date:'Oct 12'},
+            {title:'Ocean freight booking - Pacific crossings',meta:'Completed - 3 vessels confirmed - LCL buffer reserved',status:'done',date:'Oct 18'},
+            {title:'Port of entry customs clearance - Long Beach',meta:'Completed - Tier-1 broker engaged - zero holds',status:'done',date:'Oct 28'},
+            {title:'Regional DC inbound receiving - West',meta:'Active - 94% receipt confirmed - variance within SOP',status:'active',date:'Nov 02'},
+            {title:'Regional DC inbound receiving - Southwest',meta:'At risk - Customs secondary review - 36-hr delay flagged',status:'risk',date:'Nov 04'},
+            {title:'Retail store planogram execution - Americas',meta:'Active - 2,847 locations - fixture kits en route',status:'active',date:'Nov 08'},
+            {title:'eCommerce inventory allocation - Direct channel',meta:'Active - SKU mapping 98% complete - backorder logic live',status:'active',date:'Nov 09'},
+            {title:'Last-mile carrier handoff - urban markets',meta:'Pending - UPS/FedEx SLAs confirmed - surge routing ready',status:'pending',date:'Nov 14'},
+            {title:'Brick & mortar launch-day replenishment wave',meta:'Pending - Reserve inventory staged - auto-trigger set',status:'pending',date:'Nov 15'},
+            {title:'eCommerce Day 1 traffic - queue logic activation',meta:'Pending - Load balancer pre-provisioned - CDN burst ready',status:'pending',date:'Nov 15'},
+        ];
 
+        const INV_REGIONS = [
+            {name:'Pacific NW',value:112,detail:'Seattle DC - 112% of target - Auto-rebalance routing 48k units south',bar:'#639922'},
+            {name:'California North',value:97,detail:'Sacramento/Fresno nodes - On target - 1.2M units staged',bar:'#185FA5'},
+            {name:'California South',value:104,detail:'LA/SD DCs - Slightly above target - overflow routing active',bar:'#0F6E56'},
+            {name:'Southwest',value:71,detail:'AZ/NM nodes - BELOW threshold - inbound rebalance T+36hrs',bar:'#BA7517'},
+            {name:'Mountain',value:88,detail:'CO/UT - Near target - minor shortfall in rural sub-depots',bar:'#185FA5'},
+            {name:'Texas',value:96,detail:'DFW/Houston DCs - Strong - highest per-capita demand forecast',bar:'#0F6E56'},
+            {name:'Midwest',value:93,detail:'Chicago hub - On plan - rail freight confirmed',bar:'#185FA5'},
+            {name:'Southeast',value:85,detail:'Atlanta/Miami - Adequate - NPI demand slightly under-forecast',bar:'#185FA5'},
+            {name:'Mid-Atlantic',value:99,detail:'DC/Philly/NY edge - On target - holiday buffer in reserve',bar:'#0F6E56'},
+            {name:'New England',value:91,detail:'Boston DC - Healthy - winter weather contingency active',bar:'#185FA5'},
+            {name:'Great Plains',value:78,detail:'Kansas City hub - Watch list - rural distribution lag',bar:'#BA7517'},
+            {name:'Alaska / Hawaii',value:82,detail:'Honolulu/Anchorage air freight - On schedule - 5-day lead time',bar:'#185FA5'},
+        ];
 
+        const RISKS = [
+            {title:'Southwest customs secondary review',severity:'amber',tag:'Logistics',body:'US Customs & Border Protection initiated secondary review on 3 inbound containers at Nogales POE. 36-hour delay projected.',steps:['Activate Tier-2 customs broker protocol - prioritize Titanium-level shipments','Re-route 40% of Southwest allocation through El Paso alternate POE','Trigger auto-rebalance from Pacific NW overstock (+48k units) to cover gap','Notify retail partners - revised planogram execution timeline issued']},
+            {title:'eCommerce Day-1 traffic surge projection',severity:'amber',tag:'Digital',body:'ML demand model projects 4.2x normal traffic on launch morning. CDN and checkout infrastructure require pre-burst provisioning.',steps:['Pre-provision 8x CDN burst capacity across 3 edge regions','Deploy virtual queue (estimated 12-min avg wait at peak)','Activate cart-reservation timeout logic (15-min hold)','Ops war room staffed T-4hrs through T+6hrs launch window']},
+            {title:'Last-mile carrier capacity - urban surge markets',severity:'green',tag:'Fulfillment',body:'NYC, LA, Chicago last-mile partners show 94% capacity confirmation. Minor gap in Chicago suburban zone.',steps:['Chicago suburban overflow routed to secondary carrier (OnTrac)','Delivery SLA adjusted from 1-day to 2-day for 8 ZIP codes','Consumer notification templates pre-staged in CRM']},
+            {title:'Retail associate NPI training completion',severity:'green',tag:'Retail Ops',body:'2,847 store locations - 91% of associates confirmed trained on launch protocols, demo scripts, and inventory SOP.',steps:['Field ops team executing remaining 9% via virtual session T-3 days','Knowledge check pass rate: 97% - above 95% target','Launch-day digital runbook pushed to all store devices']},
+        ];
 
+        const CENSUS_STATES = [
+            {name:'TX',status:'ok'},{name:'AZ',status:'weather'},{name:'NM',status:'tribal'},
+            {name:'CO',status:'ok'},{name:'UT',status:'ok'},{name:'NV',status:'weather'},
+            {name:'CA',status:'ok'},{name:'OK',status:'ok'},{name:'KS',status:'ok'},
+            {name:'NE',status:'ok'},{name:'MO',status:'blocked'},{name:'AR',status:'tribal'},
+        ];
 
-        // =========================================================
-        // <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NPI Command Center: Project Titan Alpha</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-</head>
-<body>
-  <!-- paste widget code here -->
-</body>
-</html>
-        // =========================================================
+        const SCENARIOS = [
+            {phase:'Phase 1: Severe weather crisis',events:[
+                {time:'T+00:00',desc:'Category 3 storm system detected crossing AZ-NM corridor. Field operations in 3 states suspended.'},
+                {time:'T+01:30',desc:'Emergency resource reallocation: 847 field personnel redirected to safe zones per FEMA grid protocol.'},
+                {time:'T+02:45',desc:'Data telemetry lost from 12 municipal sub-districts. Manual check-in protocol activated.'},
+                {time:'T+04:00',desc:'TX and CO unaffected nodes absorb 60% of critical operations. Load redistribution complete.'},
+            ]},
+            {phase:'Phase 2: Tribal and municipal regulatory frameworks',events:[
+                {time:'T+06:00',desc:'Sovereign tribal territory (Navajo Nation, AZ) requires Nation-specific data privacy protocols before field re-entry.'},
+                {time:'T+07:20',desc:'Legal counsel activated. Memorandum of Agreement with tribal leadership executed within 80 minutes.'},
+                {time:'T+08:00',desc:'2 NM municipalities impose curfew-based access windows. Operations scheduled to 6-10am and 4-7pm slots.'},
+                {time:'T+09:30',desc:'All 4 tribal/municipal frameworks integrated into ops grid. Zero sovereignty violations logged.'},
+            ]},
+            {phase:'Phase 3: Crisis resolution and grid restoration',events:[
+                {time:'T+18:00',desc:'Weather corridor cleared. Field personnel mobilized back to original zones per staged re-entry protocol.'},
+                {time:'T+20:00',desc:'Data sync restored across all 12 states. Backlog processed within 4-hr SLA window.'},
+                {time:'T+22:00',desc:'Full operational capacity restored. 100% of critical milestones recovered. Zero deadline misses recorded.'},
+                {time:'T+24:00',desc:'Post-incident report filed. Resilience framework validated - now integrated into Titan Alpha contingency playbook.'},
+            ]},
+        ];
 
-        // Automatically renders the application into the DOM layout
-        const container = document.getElementById('root');
-        const root = ReactDOM.createRoot(container);
-        root.render(<App />);
-        
-    </script>
-</body>
-</html>
+        // ── Sub-components ────────────────────────────────────────────────────
+
+        function KpiBar() {
+            return (
+                <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'1px',background:'#e5e7eb',borderBottom:'0.5px solid #e5e7eb'}}>
+                    {

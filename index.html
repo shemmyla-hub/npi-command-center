@@ -55,18 +55,17 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
+        // ── Data ──────────────────────────────────────────────────────────────
         const MILESTONES_DATA = [
-            {title:'Factory gate clearance - Foxconn Zhengzhou',meta:'Completed - Batch 1 and 2 confirmed - 4.2M units',status:'done',date:'Oct 12'},
+            {title:'Factory gate clearance - Foxconn Zhengzhou',meta:'Completed - Batch 1 & 2 confirmed - 4.2M units',status:'done',date:'Oct 12'},
             {title:'Ocean freight booking - Pacific crossings',meta:'Completed - 3 vessels confirmed - LCL buffer reserved',status:'done',date:'Oct 18'},
             {title:'Port of entry customs clearance - Long Beach',meta:'Completed - Tier-1 broker engaged - zero holds',status:'done',date:'Oct 28'},
             {title:'Regional DC inbound receiving - West',meta:'Active - 94% receipt confirmed - variance within SOP',status:'active',date:'Nov 02'},
             {title:'Regional DC inbound receiving - Southwest',meta:'At risk - Customs secondary review - 36-hr delay flagged',status:'risk',date:'Nov 04'},
-            {title:'Retail store planogram execution - Americas',meta:'Active - 2847 locations - fixture kits en route',status:'active',date:'Nov 08'},
+            {title:'Retail store planogram execution - Americas',meta:'Active - 2,847 locations - fixture kits en route',status:'active',date:'Nov 08'},
             {title:'eCommerce inventory allocation - Direct channel',meta:'Active - SKU mapping 98% complete - backorder logic live',status:'active',date:'Nov 09'},
             {title:'Last-mile carrier handoff - urban markets',meta:'Pending - UPS/FedEx SLAs confirmed - surge routing ready',status:'pending',date:'Nov 14'},
-            {title:'Brick and mortar launch-day replenishment wave',meta:'Pending - Reserve inventory staged - auto-trigger set',status:'pending',date:'Nov 15'},
+            {title:'Brick & mortar launch-day replenishment wave',meta:'Pending - Reserve inventory staged - auto-trigger set',status:'pending',date:'Nov 15'},
             {title:'eCommerce Day 1 traffic - queue logic activation',meta:'Pending - Load balancer pre-provisioned - CDN burst ready',status:'pending',date:'Nov 15'},
         ];
 
@@ -86,10 +85,10 @@
         ];
 
         const RISKS = [
-            {title:'Southwest customs secondary review',severity:'amber',tag:'Logistics',body:'US Customs and Border Protection initiated secondary review on 3 inbound containers at Nogales POE. 36-hour delay projected.',steps:['Activate Tier-2 customs broker protocol - prioritize Titanium-level shipments','Re-route 40% of Southwest allocation through El Paso alternate POE','Trigger auto-rebalance from Pacific NW overstock (+48k units) to cover gap','Notify retail partners - revised planogram execution timeline issued']},
+            {title:'Southwest customs secondary review',severity:'amber',tag:'Logistics',body:'US Customs & Border Protection initiated secondary review on 3 inbound containers at Nogales POE. 36-hour delay projected.',steps:['Activate Tier-2 customs broker protocol - prioritize Titanium-level shipments','Re-route 40% of Southwest allocation through El Paso alternate POE','Trigger auto-rebalance from Pacific NW overstock (+48k units) to cover gap','Notify retail partners - revised planogram execution timeline issued']},
             {title:'eCommerce Day-1 traffic surge projection',severity:'amber',tag:'Digital',body:'ML demand model projects 4.2x normal traffic on launch morning. CDN and checkout infrastructure require pre-burst provisioning.',steps:['Pre-provision 8x CDN burst capacity across 3 edge regions','Deploy virtual queue (estimated 12-min avg wait at peak)','Activate cart-reservation timeout logic (15-min hold)','Ops war room staffed T-4hrs through T+6hrs launch window']},
             {title:'Last-mile carrier capacity - urban surge markets',severity:'green',tag:'Fulfillment',body:'NYC, LA, Chicago last-mile partners show 94% capacity confirmation. Minor gap in Chicago suburban zone.',steps:['Chicago suburban overflow routed to secondary carrier (OnTrac)','Delivery SLA adjusted from 1-day to 2-day for 8 ZIP codes','Consumer notification templates pre-staged in CRM']},
-            {title:'Retail associate NPI training completion',severity:'green',tag:'Retail Ops',body:'2847 store locations - 91% of associates confirmed trained on launch protocols, demo scripts, and inventory SOP.',steps:['Field ops team executing remaining 9% via virtual session T-3 days','Knowledge check pass rate: 97% - above 95% target','Launch-day digital runbook pushed to all store devices']},
+            {title:'Retail associate NPI training completion',severity:'green',tag:'Retail Ops',body:'2,847 store locations - 91% of associates confirmed trained on launch protocols, demo scripts, and inventory SOP.',steps:['Field ops team executing remaining 9% via virtual session T-3 days','Knowledge check pass rate: 97% - above 95% target','Launch-day digital runbook pushed to all store devices']},
         ];
 
         const CENSUS_STATES = [
@@ -120,6 +119,8 @@
             ]},
         ];
 
+        // ── Sub-components ────────────────────────────────────────────────────
+
         function KpiBar() {
             return (
                 <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'1px',background:'#e5e7eb',borderBottom:'0.5px solid #e5e7eb'}}>
@@ -141,7 +142,7 @@
         }
 
         function Tab1() {
-            const [milestones, setMilestones] = useState(MILESTONES_DATA);
+            const [milestones, setMilestones] = React.useState(MILESTONES_DATA);
             const cycle = ['pending','active','done','risk'];
             const cycleStatus = (i) => {
                 const m = [...milestones];
@@ -185,10 +186,10 @@
         }
 
         function Tab2() {
-            const [selectedInv, setSelectedInv] = useState(null);
-            const barRef1 = useRef(null);
-            const barRef2 = useRef(null);
-            useEffect(() => {
+            const [selectedInv, setSelectedInv] = React.useState(null);
+            const barRef1 = React.useRef(null);
+            const barRef2 = React.useRef(null);
+            React.useEffect(() => {
                 setTimeout(() => {
                     if(barRef1.current) barRef1.current.style.width='82%';
                     if(barRef2.current) barRef2.current.style.width='61%';
@@ -198,7 +199,7 @@
                 <div style={{padding:'1.25rem 1.5rem'}}>
                     <div style={{background:'#E6F1FB',border:'0.5px solid #85B7EB',borderRadius:8,padding:'10px 14px',marginBottom:'1rem',display:'flex',alignItems:'center',gap:10,fontSize:12,color:'#0C447C'}}>
                         <i className="ti ti-refresh" aria-hidden="true" style={{fontSize:16,flexShrink:0}}></i>
-                        <span><strong>Auto-rebalance active:</strong> 48000 units routed from Pacific NW overstock to Southwest deficit nodes - Est. arrival T+36hrs</span>
+                        <span><strong>Auto-rebalance active:</strong> 48,000 units routed from Pacific NW overstock to Southwest deficit nodes - Est. arrival T+36hrs</span>
                     </div>
                     <div style={{fontSize:10,fontWeight:500,letterSpacing:'0.12em',textTransform:'uppercase',color:'#9ca3af',marginBottom:12}}>12-state Americas market - Inventory allocation</div>
                     <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:'1rem'}}>
@@ -228,15 +229,15 @@
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
                         <div style={{background:'#f9fafb',borderRadius:8,padding:'12px 14px',border:'0.5px solid #e5e7eb'}}>
                             <div style={{fontSize:11,color:'#6b7280',marginBottom:4}}>eCommerce direct channel</div>
-                            <div style={{fontSize:20,fontWeight:500,color:'#185FA5'}}>24800</div>
+                            <div style={{fontSize:20,fontWeight:500,color:'#185FA5'}}>24,800</div>
                             <div style={{fontSize:11,color:'#3B6D11',marginTop:2}}><i className="ti ti-trending-up" aria-hidden="true"></i> 12% above SLA target</div>
                             <div style={{height:4,background:'#e5e7eb',borderRadius:2,marginTop:8}}>
                                 <div ref={barRef1} style={{width:'0%',height:4,borderRadius:2,background:'#185FA5',transition:'width 0.8s ease'}}></div>
                             </div>
                         </div>
                         <div style={{background:'#f9fafb',borderRadius:8,padding:'12px 14px',border:'0.5px solid #e5e7eb'}}>
-                            <div style={{fontSize:11,color:'#6b7280',marginBottom:4}}>Brick and mortar fulfillment</div>
-                            <div style={{fontSize:20,fontWeight:500,color:'#0F6E56'}}>18200</div>
+                            <div style={{fontSize:11,color:'#6b7280',marginBottom:4}}>Brick &amp; mortar fulfillment</div>
+                            <div style={{fontSize:20,fontWeight:500,color:'#0F6E56'}}>18,200</div>
                             <div style={{fontSize:11,color:'#854F0B',marginTop:2}}><i className="ti ti-alert-triangle" aria-hidden="true"></i> Southwest nodes lagging</div>
                             <div style={{height:4,background:'#e5e7eb',borderRadius:2,marginTop:8}}>
                                 <div ref={barRef2} style={{width:'0%',height:4,borderRadius:2,background:'#0F6E56',transition:'width 0.8s ease'}}></div>
@@ -248,10 +249,179 @@
         }
 
         function Tab3() {
-            const [censusOpen, setCensusOpen] = useState(true);
-            const [scenario, setScenario] = useState(0);
-            const [openRisks, setOpenRisks] = useState({});
+            const [censusOpen, setCensusOpen] = React.useState(true);
+            const [scenario, setScenario] = React.useState(0);
+            const [openRisks, setOpenRisks] = React.useState({});
             const toggleRisk = (i) => setOpenRisks(prev => ({...prev,[i]:!prev[i]}));
             const stateClass = {ok:'state-ok',weather:'state-weather',tribal:'state-tribal',blocked:'state-blocked'};
             return (
-                <div style={{padding:'1.25rem
+                <div style={{padding:'1.25rem 1.5rem'}}>
+                    <div style={{border:'0.5px solid #85B7EB',borderRadius:8,background:'#E6F1FB',marginBottom:'1rem',overflow:'hidden'}}>
+                        <div style={{padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',cursor:'pointer'}} onClick={() => setCensusOpen(!censusOpen)}>
+                            <div style={{fontSize:13,fontWeight:500,color:'#0C447C'}}>
+                                <i className="ti ti-map-2" aria-hidden="true" style={{marginRight:6,fontSize:14}}></i>
+                                Historical simulation: Operation Multi-State Grid (Census Paradigm)
+                            </div>
+                            <div style={{display:'flex',alignItems:'center',gap:8}}>
+                                <span style={{fontSize:10,background:'#185FA5',color:'white',padding:'2px 8px',borderRadius:10,fontWeight:500}}>SIMULATION</span>
+                                <i className="ti ti-chevron-down" aria-hidden="true" style={{fontSize:14,color:'#185FA5',transition:'transform 0.2s',transform:censusOpen?'':'rotate(-90deg)'}}></i>
+                            </div>
+                        </div>
+                        {censusOpen && (
+                            <div style={{padding:'0 16px 14px'}}>
+                                <div style={{fontSize:11,color:'#0C447C',marginBottom:8,lineHeight:1.6}}>A real-world stress test of grid logistics across a volatile 12-state territory during a national crisis - demonstrating the resource allocation and compliance framework now applied to Titan Alpha fulfillment operations.</div>
+                                <div style={{fontSize:10,fontWeight:500,letterSpacing:'0.12em',textTransform:'uppercase',color:'#185FA5',marginBottom:8}}>State grid status</div>
+                                <div style={{display:'flex',flexWrap:'wrap',gap:4,marginBottom:10}}>
+                                    {CENSUS_STATES.map((s,i) => <span key={i} className={`state-chip ${stateClass[s.status]}`}>{s.name}</span>)}
+                                    <br/>
+                                    <div style={{display:'flex',gap:8,marginTop:6,width:'100%'}}>
+                                        {Object.entries({ok:'Operational',weather:'Weather',tribal:'Tribal/municipal',blocked:'Disrupted'}).map(([k,v]) => (
+                                            <span key={k} className={`state-chip ${stateClass[k]}`}>{v}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div style={{fontSize:10,fontWeight:500,letterSpacing:'0.12em',textTransform:'uppercase',color:'#185FA5',marginBottom:8}}>Live scenario feed</div>
+                                <div style={{marginBottom:10}}>
+                                    <div style={{fontSize:11,fontWeight:500,color:'#0C447C',marginBottom:8}}>{SCENARIOS[scenario].phase}</div>
+                                    {SCENARIOS[scenario].events.map((e,i) => (
+                                        <div key={i} className="sim-event">
+                                            <div style={{fontSize:10,fontWeight:500,color:'#185FA5',marginBottom:1}}>{e.time}</div>
+                                            <div style={{fontSize:11,color:'#111827'}}>{e.desc}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                                    {SCENARIOS.map((_,i) => (
+                                        <button key={i} className={`sim-btn${scenario===i?' active-btn':''}`} onClick={() => setScenario(i)}>
+                                            Phase {i+1}: {['Weather event','Tribal frameworks','Resolution'][i]}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div style={{fontSize:10,fontWeight:500,letterSpacing:'0.12em',textTransform:'uppercase',color:'#9ca3af',marginBottom:12}}>Active risk register</div>
+                    {RISKS.map((r,i) => (
+                        <div key={i} style={{border:'0.5px solid #e5e7eb',borderRadius:8,marginBottom:10,overflow:'hidden'}}>
+                            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 14px',cursor:'pointer',background:'#f9fafb'}} onClick={() => toggleRisk(i)}>
+                                <div style={{fontSize:13,fontWeight:500,display:'flex',alignItems:'center',gap:8}}>
+                                    <span style={{fontSize:10,fontWeight:500,padding:'2px 7px',borderRadius:8,background:r.severity==='amber'?'#FAEEDA':'#EAF3DE',color:r.severity==='amber'?'#854F0B':'#3B6D11'}}>{r.tag}</span>
+                                    {r.title}
+                                </div>
+                                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                                    <span style={{fontSize:10,color:'#9ca3af'}}>{r.severity==='amber'?'Amber - monitoring':'Green - resolved'}</span>
+                                    <i className="ti ti-chevron-down" aria-hidden="true" style={{fontSize:13,color:'#9ca3af',transition:'transform 0.2s',transform:openRisks[i]?'rotate(180deg)':''}}></i>
+                                </div>
+                            </div>
+                            {openRisks[i] && (
+                                <div style={{padding:'12px 14px',borderTop:'0.5px solid #e5e7eb',fontSize:12,lineHeight:1.6,color:'#6b7280'}}>
+                                    <div style={{marginBottom:8}}>{r.body}</div>
+                                    <div style={{fontSize:11,fontWeight:500,color:'#6b7280',marginBottom:4,letterSpacing:'0.08em',textTransform:'uppercase'}}>Automated mitigation playbook</div>
+                                    {r.steps.map((s,j) => (
+                                        <div key={j} className="playbook-step">
+                                            <div className="step-num">{j+1}</div>
+                                            <div style={{fontSize:12,color:'#111827'}}>{s}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        function ExecView() {
+            return (
+                <div style={{padding:'1.25rem 1.5rem'}}>
+                    <div style={{background:'#f9fafb',borderRadius:8,border:'0.5px solid #e5e7eb',padding:'1.25rem'}}>
+                        <div style={{fontSize:11,fontWeight:500,letterSpacing:'0.1em',textTransform:'uppercase',color:'#9ca3af'}}>Executive brief - Project Titan Alpha</div>
+                        <div style={{fontSize:15,fontWeight:500,marginTop:6}}>Launch health: <span style={{color:'#639922'}}>On track</span></div>
+                        <div style={{fontSize:12,color:'#6b7280',marginTop:4,lineHeight:1.7}}>Supply chain readiness at 94%. 47 of 52 NPI milestones complete. One amber-flag risk in Southwest customs corridor - automated playbook activated, ETA resolution T-3 days. No impact to consumer launch date projected.</div>
+                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginTop:12}}>
+                            {[
+                                {label:'Supply chain readiness',val:'94%',status:'+3pts week-over-week',sc:'#3B6D11'},
+                                {label:'Regional inventory stocked',val:'89%',status:'12 of 14 nodes at target',sc:'#3B6D11'},
+                                {label:'Cart-to-door SLA',val:'1.8 days',status:'Within 2-day SLA target',sc:'#3B6D11'},
+                                {label:'Channel conversion rate',val:'6.4%',status:'Surge mitigation active',sc:'#854F0B'},
+                            ].map((m,i) => (
+                                <div key={i} style={{background:'white',borderRadius:8,border:'0.5px solid #e5e7eb',padding:'12px 14px'}}>
+                                    <div style={{fontSize:11,color:'#6b7280'}}>{m.label}</div>
+                                    <div style={{fontSize:20,fontWeight:500,marginTop:2,color:'#185FA5'}}>{m.val}</div>
+                                    <div style={{fontSize:11,marginTop:4,color:m.sc}}>{m.status}</div>
+                                </div>
+                            ))}
+                        </div>
+                        <div style={{height:'0.5px',background:'#e5e7eb',margin:'1rem 0'}}></div>
+                        <div style={{fontSize:11,fontWeight:500,color:'#6b7280'}}>Key risks under management</div>
+                        <div style={{marginTop:6,fontSize:12,lineHeight:1.8}}>
+                            <div>- <span style={{color:'#854F0B'}}>Southwest customs delay</span> - 48-hr buffer activated, alternative routing in play</div>
+                            <div>- <span style={{color:'#854F0B'}}>{"Web traffic surge (Day 1)"}</span> {"- CDN burst capacity pre-provisioned, queue logic deployed"}</div>
+                            <div>- <span style={{color:'#3B6D11'}}>Census Paradigm protocol</span> - validated multi-state grid resilience framework standing by</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // ── Main App ──────────────────────────────────────────────────────────
+        function App() {
+            const [execOn, setExecOn] = React.useState(false);
+            const [activeTab, setActiveTab] = React.useState(0);
+            const tabs = ['Launch Timeline & NPI Milestones','Inventory Density & Supply Chain','Risk & Compliance Matrix'];
+
+            return (
+                <div style={{maxWidth:900,margin:'0 auto',background:'white',borderRadius:12,overflow:'hidden',boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginTop:24,marginBottom:24}}>
+                    {/* Header */}
+                    <div style={{borderBottom:'0.5px solid #e5e7eb',padding:'1.25rem 1.5rem 1rem'}}>
+                        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
+                            <div>
+                                <div style={{fontSize:11,fontWeight:500,letterSpacing:'0.12em',color:'#9ca3af',textTransform:'uppercase',marginBottom:2}}>Americas RFO - Direct Channel</div>
+                                <div style={{fontSize:18,fontWeight:500}}>NPI Command Center: Project Titan Alpha</div>
+                                <div style={{fontSize:12,color:'#6b7280',marginTop:2}}>Live telemetry - Americas Region - 47 fulfillment nodes active</div>
+                            </div>
+                            <div style={{textAlign:'right'}}>
+                                <div style={{fontSize:10,color:'#9ca3af',letterSpacing:'0.1em',textTransform:'uppercase'}}>Launch window</div>
+                                <div style={{fontSize:13,fontWeight:500,color:'#185FA5'}}>T-minus 14 days</div>
+                                <div style={{display:'flex',alignItems:'center',gap:4,justifyContent:'flex-end',marginTop:3}}>
+                                    <div style={{width:6,height:6,borderRadius:'50%',background:'#639922'}}></div>
+                                    <span style={{fontSize:10,color:'#9ca3af'}}>All systems nominal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Exec toggle bar */}
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0.6rem 1.5rem',background:'#f9fafb',borderBottom:'0.5px solid #e5e7eb'}}>
+                        <span style={{fontSize:11,fontWeight:500,color:'#6b7280',letterSpacing:'0.08em',textTransform:'uppercase'}}>Executive view</span>
+                        <div style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}} onClick={() => setExecOn(!execOn)}>
+                            <div className={`toggle-track${execOn?' on':''}`}><div className="toggle-thumb"></div></div>
+                            <span style={{fontSize:11,color:'#6b7280'}}>{execOn?'On':'Off'}</span>
+                        </div>
+                    </div>
+
+                    {execOn ? <ExecView /> : (
+                        <>
+                            <KpiBar />
+                            <div style={{display:'flex',borderBottom:'0.5px solid #e5e7eb',padding:'0 1.5rem'}}>
+                                {tabs.map((t,i) => (
+                                    <button key={i} className={`tab-btn${activeTab===i?' active':''}`} onClick={() => setActiveTab(i)}>{t}</button>
+                                ))}
+                            </div>
+                            {activeTab===0 && <Tab1 />}
+                            {activeTab===1 && <Tab2 />}
+                            {activeTab===2 && <Tab3 />}
+                        </>
+                    )}
+                </div>
+            );
+        }
+
+        // ── Mount ─────────────────────────────────────────────────────────────
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
+    </script>
+</body>
+</html>
